@@ -1,14 +1,16 @@
-From ubuntu:latest
+From ubuntu:18.04
 
-MAINTAINER sky
+MAINTAINER ejoful <ejoful@gmail.com>
 
-RUN sed -i'' 's/archive\.ubuntu\.com/us\.archive\.ubuntu\.com/' /etc/apt/sources.list
-RUN apt -y update
+# 安装最新的软件
+RUN apt update && apt -y upgrade
 
-# 
-RUN apt install -y software-properties-common
-RUN add-apt-repository -r ppa:fossfreedom/byzanz
-RUN apt update
+# 添加ondrej/php PPA存储库，它有最新的PHP构建包
+RUN apt -y install software-properties-common
+RUN add-apt-repository ppa:ondrej/php
+
+# 安装最新的软件
+RUN apt update && apt -y upgrade
 
 # docker ubuntu 不选时区 https://blog.csdn.net/taiyangdao/article/details/80512997
 # 1. 设置tzdata的前端类型（通过环境变量）
@@ -20,38 +22,37 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 # 4. 重新配置tzdata软件包，使得时区设置生效
 RUN dpkg-reconfigure -f noninteractive tzdata
 
-# Install Apache
+# 安装 Apache2
 RUN apt install -y apache2
 
-# Set timezone
-RUN echo "Asia/Shanghai" | tee /etc/timezone
 
-# Install PHP
-RUN apt install --fix-missing -y \
-php \
-libapache2-mod-php \
-php-intl \
-php-pdo \
-php-pdo-sqlite \
-php-pdo-mysql \
-php-pdo-pgsql \
-php-dev \
-php-common \
-php-gd \
-php-mbstring \
-php-apcu \
-php-imagick \
-php-redis \
-php-curl \
-php-memcached \
-php-imagick \
-php-cli \
-php-opcache \
-php-mongodb \
+# 安装 PHP7.4
+RUN apt install -y \
+php7.4 \
+php7.4-apcu \
+php7.4-curl \
+php7.4-dev \
+php7.4-gd \
+php7.4-fpm \
+php7.4-imagick \
+php7.4-intl \
+php7.4-mbstring \
+php7.4-memcached \
+php7.4-mongodb \
 php-pear \
-php-fpm
+php7.4-pdo \
+php7.4-pdo-sqlite \
+php7.4-pdo-mysql \
+php7.4-pdo-pgsql \
+php7.4-redis
+
 
 # get php.ini file path
 RUN php_ini_path=$(php -i | grep /.+/php.ini -Eo)
 
+
 EXPOSE 80
+
+
+
+
